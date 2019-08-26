@@ -48,7 +48,7 @@ YOUTUBE_API_VERSION = "v3"
 # Set DEVELOPER_KEY to the "API key" value from the Google Developers Console:
 # https://console.developers.google.com/project/_/apiui/credential
 # Please ensure that you have enabled the YouTube Data API for your project.
-DEVELOPER_KEY = "AIzaSyCB3AQSOr4wOpEN50uGNUl01VjUx4CqOmg"
+DEVELOPER_KEY = "REPLACE ME"
 
 
 def get_authenticated_service():

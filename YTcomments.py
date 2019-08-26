@@ -5,7 +5,7 @@ from googleapiclient.discovery import build
 # https://console.developers.google.com/project/_/apiui/credential
 # Please ensure that you have enabled the YouTube Data API for your project.
 
-DEVELOPER_KEY = "AIzaSyCB3AQSOr4wOpEN50uGNUl01VjUx4CqOmg"
+DEVELOPER_KEY = "REPLACE ME"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
