@@ -41,14 +41,14 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account.
-YOUTUBE_READ_WRITE_SCOPE = "https://www.googleapis.com/auth/youtube"
+YOUTUBE_READ_WRITE_SCOPE = "https://www.googleapis.com/auth/youtube.force-ssl"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
 # Set DEVELOPER_KEY to the "API key" value from the Google Developers Console:
 # https://console.developers.google.com/project/_/apiui/credential
 # Please ensure that you have enabled the YouTube Data API for your project.
-DEVELOPER_KEY = "REPLACE ME"
+DEVELOPER_KEY = "AIzaSyCB3AQSOr4wOpEN50uGNUl01VjUx4CqOmg"
 
 
 def get_authenticated_service():
@@ -75,7 +75,7 @@ def get_video_id(youtube_request):
             order="date",
             channelId="UCqnFo90nZIcOxbfMekqnKiQ",
             maxResults=50,
-            publishedAfter="2019-05-21T00:00:00.000Z",
+            publishedAfter="2019-06-21T00:00:00.000Z",
             pageToken=next_page_token
         )
         response = video_id_request.execute()
@@ -83,7 +83,7 @@ def get_video_id(youtube_request):
         for i in response['items']:
             video_id.append(i['id']['videoId'])
 
-        next_page_token = response['nextPageToken']
+        next_page_token = response.get('nextPageToken')
 
         if next_page_token is None:
             break
@@ -93,11 +93,32 @@ def get_video_id(youtube_request):
 
 def like_video(youtube_request, id_video):
 
-    for i in id_video:
+    for item in id_video:
         youtube_request.videos().rate(
-            id=i,
+            id=item,
             rating="like"
         ).execute()
+
+
+def comment_video(youtube_request, channel_id, id_video, text):
+    insert_result = youtube_request.commentThreads().insert(
+        part="snippet",
+        body=dict(
+            snippet=dict(
+                channelId=channel_id,
+                videoId=id_video,
+                topLevelComment=dict(
+                    snippet=dict(
+                        textOriginal=text)
+                )
+            )
+        )
+    ).execute()
+
+    comment = insert_result["snippet"]["topLevelComment"]
+    author = comment["snippet"]["authorDisplayName"]
+    text = comment["snippet"]["textDisplay"]
+    print("Inserted comment for %s: %s" % (author, text))
 
 
 if __name__ == "__main__":
@@ -118,7 +139,9 @@ if __name__ == "__main__":
 
         try:
             like_video(authenticated_service, youtube_videoId_links)
+            comment_video(authenticated_service, 'UCqnFo90nZIcOxbfMekqnKiQ', 'Hh_8hp-c65c', '#JucaS3laSabe')
         except HttpError as e:
             print(f'An HTTP error {e.resp.status} occurred: {e.content}')
         else:
             print('Video has been liked.')
+
